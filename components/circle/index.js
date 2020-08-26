@@ -2,7 +2,7 @@
 import React from 'react'
 import withPropsReactive from '../utils/withPropsReactive'
 import log from '../utils/log'
-import { toLnglat } from '../utils/common'
+import { toLnglat, getWindow } from '../utils/common'
 /*
  * props
  * {
@@ -53,7 +53,7 @@ class Circle extends React.Component<CircleProps, {loaded: boolean}> {
 
   constructor(props: CircleProps) {
     super(props)
-    if (typeof window !== 'undefined') {
+    if (typeof getWindow() !== 'undefined') {
       if (!props.__map__) {
         log.warning('MAP_INSTANCE_REQUIRED')
       } else {
@@ -97,7 +97,7 @@ class Circle extends React.Component<CircleProps, {loaded: boolean}> {
   createInstance(props: CircleProps) {
     const options = this.buildCreateOptions(props)
     options.map = this.map
-    this.mapCircle = new window.AMap.Circle(options)
+    this.mapCircle = new (getWindow().AMap.Circle)(options)
     return Promise.resolve(this.mapCircle)
   }
 

@@ -2,6 +2,8 @@
 import React from 'react'
 import withPropsReactive from '../utils/withPropsReactive'
 import log from '../utils/log'
+import { getWindow } from '../utils/common'
+
 /*
  * props
  * {
@@ -36,7 +38,7 @@ class GroundImage extends React.Component<GIProps, {}> {
 
   constructor(props: GIProps) {
     super(props)
-    if (typeof window !== 'undefined') {
+    if (typeof getWindow() !== 'undefined') {
       if (!props.__map__) {
         log.warning('MAP_INSTANCE_REQUIRED')
       } else {
@@ -102,7 +104,7 @@ class GroundImage extends React.Component<GIProps, {}> {
     } else {
       opacity = defaultOpts.opacity
     }
-    this.image = new window.AMap.GroundImage(src, bounds, {
+    this.image = new (getWindow().AMap.GroundImage)(src, bounds, {
       map: this.map,
       clickable,
       opacity
@@ -117,9 +119,9 @@ class GroundImage extends React.Component<GIProps, {}> {
     if ('getSouthWest' in rawBounds) {
       return rawBounds
     }
-    const bounds = new window.AMap.Bounds(
-      new window.AMap.LngLat(rawBounds.sw.longitude, rawBounds.sw.latitude),
-      new window.AMap.LngLat(rawBounds.ne.longitude, rawBounds.ne.latitude)
+    const bounds = new (getWindow().AMap.Bounds)(
+      new (getWindow().AMap.LngLat)(rawBounds.sw.longitude, rawBounds.sw.latitude),
+      new (getWindow().AMap.LngLat)(rawBounds.ne.longitude, rawBounds.ne.latitude)
     )
     return bounds
   }

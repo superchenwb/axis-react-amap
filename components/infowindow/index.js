@@ -6,7 +6,8 @@ import log from '../utils/log'
 import {
   toLnglat,
   toPixel,
-  toSize
+  toSize,
+  getWindow
 } from '../utils/common'
 /*
  * props
@@ -64,7 +65,7 @@ class InfoWindow extends Component<IWProps, {}> {
 
   constructor(props: IWProps) {
     super(props)
-    if (typeof window !== 'undefined') {
+    if (typeof getWindow() !== 'undefined') {
       if (!props.__map__) {
         log.warning('MAP_INSTANCE_REQUIRED')
       } else {
@@ -110,7 +111,7 @@ class InfoWindow extends Component<IWProps, {}> {
 
   createInfoWindow(props: IWProps) {
     const options = this.buildCreateOptions(props)
-    this.infoWindow = new window.AMap.InfoWindow(options)
+    this.infoWindow = new (getWindow().AMap.InfoWindow)(options)
     this.props.onInstanceCreated && this.props.onInstanceCreated()
   }
 

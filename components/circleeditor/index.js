@@ -2,6 +2,7 @@
 import React from 'react'
 import log from '../utils/log'
 import isFun from '../utils/isFun'
+import { getWindow } from '../utils/common'
 
 type EditorProps = {
   __map__: Object,
@@ -21,7 +22,7 @@ class CircleEditor extends React.Component<EditorProps, {}> {
 
   constructor(props: EditorProps) {
     super(props)
-    if (typeof window !== 'undefined') {
+    if (typeof getWindow() !== 'undefined') {
       if (!(props.__map__ && props.__circle__)) {
         log.warning('CIRCLE_INSTANCE_REQUIRED')
       } else {
@@ -86,7 +87,7 @@ class CircleEditor extends React.Component<EditorProps, {}> {
   }
 
   createEditorInstance(props: EditorProps) {
-    this.circleEditor = new window.AMap.CircleEditor(
+    this.circleEditor = new (getWindow().AMap.CircleEditor)(
       this.map, this.circle
     )
     const events = this.exposeEditorInstance(props)

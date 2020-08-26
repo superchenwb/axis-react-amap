@@ -3,7 +3,7 @@ import React from 'react'
 import withPropsReactive from '../utils/withPropsReactive'
 import log from '../utils/log'
 import PolyEditor from '../polyeditor'
-import { toLnglat } from '../utils/common'
+import { toLnglat, getWindow } from '../utils/common'
 
 const Component = React.Component
 
@@ -49,7 +49,7 @@ class Polyline extends Component<LineProps, {loaded: boolean}> {
 
   constructor(props: LineProps) {
     super(props)
-    if (typeof window !== 'undefined') {
+    if (typeof getWindow() !== 'undefined') {
       if (!props.__map__) {
         log.warning('MAP_INSTANCE_REQUIRED')
       } else {
@@ -90,7 +90,7 @@ class Polyline extends Component<LineProps, {loaded: boolean}> {
   createMapPolyline(props: LineProps) {
     const options = this.buildCreateOptions(props)
     options.map = this.map
-    this.polyline = new window.AMap.Polyline(options)
+    this.polyline = new (getWindow().AMap.Polyline)(options)
     this.setState({
       loaded: true
     })

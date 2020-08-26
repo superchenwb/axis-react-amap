@@ -1,5 +1,15 @@
 const hasWindow = (typeof window !== 'undefined')
 
+let globalWin = typeof window !== 'undefined' ? window : undefined;
+
+export const setWindow = (win) => {
+  globalWin = win;
+}
+
+export const getWindow = () => {
+  return globalWin;
+}
+
 /*
  * [lng, lat]
  * {lng, lat}
@@ -25,7 +35,7 @@ export const toLnglat = (pos) => {
     lng = pos.longitude
     lat = pos.latitude
   }
-  return hasWindow ? new window.AMap.LngLat(lng, lat) : null
+  return hasWindow ? new (getWindow().AMap.LngLat)(lng, lat) : null
 }
 
 export const toPixel = (ofst) => {
@@ -44,7 +54,7 @@ export const toPixel = (ofst) => {
     x = ofst.x;
     y = ofst.y;
   }
-  return hasWindow ? new window.AMap.Pixel(x, y) : null
+  return hasWindow ? new (getWindow().AMap.Pixel)(x, y) : null
 }
 
 export const toSize = (size) => {
@@ -54,7 +64,7 @@ export const toSize = (size) => {
   if ('getWidth' in size) {
     return size
   }
-  return hasWindow ? new window.AMap.Size(size.width, size.height) : null
+  return hasWindow ? new (getWindow().AMap.Size)(size.width, size.height) : null
 }
 
 export default {

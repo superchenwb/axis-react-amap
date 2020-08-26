@@ -8,8 +8,11 @@ import {
   getPropValue,
   renderMarkerComponent
 } from '../utils/markerUtils';
+import {
+  getWindow
+} from '../utils/common'
 
-if (typeof window !== 'undefined') {
+if (typeof getWindow() !== 'undefined') {
   const styleText = `.amap_markers_pop_window{
     padding: 10px;
     border: 1px solid #ddd;
@@ -124,7 +127,7 @@ class Markers extends Component<MarkerProps, {}> {
 
   constructor(props: MarkerProps) {
     super(props);
-    if (typeof window !== 'undefined') {
+    if (typeof getWindow() !== 'undefined') {
       if (!props.__map__) {
         log.warning('MAP_INSTANCE_REQUIRED');
       } else {
@@ -133,8 +136,8 @@ class Markers extends Component<MarkerProps, {}> {
         this.markersCache = defaultOpts.markersCache;
         this.useCluster = null;
         this.markerIDCache = defaultOpts.markerIDCache;
-        this.resetOffset = new window.AMap.Pixel(-SIZE_WIDTH / 2, -SIZE_HEIGHT);
-        this.hoverOffset = new window.AMap.Pixel(-SIZE_HOVER_WIDTH / 2, -SIZE_HOVER_HEIGHT);
+        this.resetOffset = new (getWindow().AMap.Pixel)(-SIZE_WIDTH / 2, -SIZE_HEIGHT);
+        this.hoverOffset = new (getWindow().AMap.Pixel)(-SIZE_HOVER_WIDTH / 2, -SIZE_HOVER_HEIGHT);
         this.createMarkers(props);
       }
     }
@@ -173,7 +176,7 @@ class Markers extends Component<MarkerProps, {}> {
       }
       options.content = markerContent;
 
-      const marker = new window.AMap.Marker(options);
+      const marker = new (getWindow().AMap.Marker)(options);
       marker.on('click', (e) => { this.onMarkerClick(e); });
       marker.on('mouseover', (e) => { this.onMarkerHover(e); });
       marker.on('mouseout', (e) => { this.onMarkerHoverOut(e); });
@@ -294,11 +297,6 @@ class Markers extends Component<MarkerProps, {}> {
 
   createClusterPlugin(config: Object) {
     let options = {};
-    // const style = {
-    //   url: clusterIcon,
-    //   size: new window.AMap.Size(56, 56),
-    //   offset: new window.AMap.Pixel(-28, -28)
-    // };
     const defalutOptions: Object = {
       minClusterSize: 2,
       zoomOnClick: false,
@@ -316,7 +314,7 @@ class Markers extends Component<MarkerProps, {}> {
       }
     });
 
-    this.mapCluster = new window.AMap.MarkerClusterer(this.map, [], options);
+    this.mapCluster = new (getWindow().AMap.MarkerClusterer)(this.map, [], options);
     let events = {};
     if ('events' in config) {
       events = config.events;
@@ -392,13 +390,13 @@ class Markers extends Component<MarkerProps, {}> {
   }
 
   initClusterMarkerWindow() {
-    this.markersWindow = new window.AMap.InfoWindow({
+    this.markersWindow = new (getWindow().AMap.InfoWindow)({
       isCustom: true,
       autoMove: true,
       closeWhenClickMap: true,
       content: '<span>loading...</span>',
       showShadow: false,
-      offset: new window.AMap.Pixel(0, -20)
+      offset: new (getWindow().AMap.Pixel)(0, -20)
     });
     this.markersDOM = document.createElement('div');
     this.markersDOM.className = 'amap_markers_pop_window';

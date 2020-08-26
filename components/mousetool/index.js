@@ -2,6 +2,7 @@
 import React from 'react'
 import withPropsReactive from '../utils/withPropsReactive'
 import log from '../utils/log'
+import { getWindow } from '../utils/common'
 
 type MTProps = {
   __map__: Object,
@@ -16,7 +17,7 @@ class MouseTool extends React.Component<MTProps, {}> {
 
   constructor(props: MTProps) {
     super(props)
-    if (typeof window !== 'undefined') {
+    if (typeof getWindow() !== 'undefined') {
       if (!props.__map__) {
         log.warning('MAP_INSTANCE_REQUIRED')
       } else {
@@ -39,7 +40,7 @@ class MouseTool extends React.Component<MTProps, {}> {
   loadToolInstance() {
     return new Promise(resolve => {
       this.map.plugin(['AMap.MouseTool'], () => {
-        this.tool = new window.AMap.MouseTool(this.map)
+        this.tool = new (getWindow().AMap.MouseTool)(this.map)
         resolve()
       })
     })

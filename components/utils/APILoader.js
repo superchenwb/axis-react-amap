@@ -1,3 +1,5 @@
+import { getWindow } from '../utils/common'
+
 const DEFAULT_CONFIG = {
     v: '1.4.0',
     hostAndPath: 'webapi.amap.com/maps',
@@ -10,19 +12,19 @@ let mainPromise = null
 let amapuiPromise = null
 let amapuiInited = false
 export default class APILoader {
-    constructor({ key, useAMapUI, version, protocol, iFrameDom, iFrameWindow }) {
-        this.config = { ...DEFAULT_CONFIG, useAMapUI, protocol, iFrameDom, iFrameWindow}
-        if (typeof window !== 'undefined') {
+    constructor({ key, useAMapUI, version, protocol }) {
+        this.config = { ...DEFAULT_CONFIG, useAMapUI, protocol}
+        if (typeof getWindow() !== 'undefined') {
             if (key) {
                 this.config.key = key
-            } else if ('amapkey' in this.config.iFrameWindow) {
-                this.config.key = this.config.iFrameWindow.amapkey
+            } else if ('amapkey' in getWindow()) {
+                this.config.key = getWindow().amapkey
             }
         }
         if (version) {
             this.config.v = version
         }
-        this.protocol = protocol || this.config.iFrameWindow.location.protocol
+        this.protocol = protocol || getWindow().location.protocol
         if (this.protocol.indexOf(':') === -1) {
             this.protocol += ':'
         }
@@ -33,12 +35,7 @@ export default class APILoader {
     }
 
     buildScriptTag(src) {
-        const iFrameDom= this.config.iFrameDom;
-        const iFrameWindow= this.config.iFrameWindow;
-        console.log(iFrameDom);
-        console.log(iFrameWindow);
-        console.log(iFrameWindow.document);
-        const script = iFrameWindow.document.createElement('script')
+        const script = getWindow().document.createElement('script')
         script.type = 'text/javascript'
         script.async = true
         script.defer = true
@@ -47,7 +44,7 @@ export default class APILoader {
     }
 
     getAmapuiPromise() {
-        if (this.config.iFrameWindow.AMapUI) {
+        if (getWindow().AMapUI) {
             return Promise.resolve()
         }
         const script = this.buildScriptTag(`${this.protocol}//webapi.amap.com/ui/1.0/main-async.js`)
@@ -56,27 +53,27 @@ export default class APILoader {
                 resolve()
             }
         })
-        this.config.iFrameWindow.document.body.appendChild(script)
+        getWindow().document.body.appendChild(script)
         return p
     }
 
     getMainPromise() {
-        if (this.config.iFrameWindow.AMap) {
+        if (getWindow().AMap) {
             return Promise.resolve()
         }
         const script = this.buildScriptTag(this.getScriptSrc(this.config))
         const p = new Promise(resolve => {
-            this.config.iFrameWindow[this.config.callback] = () => {
+            getWindow()[this.config.callback] = () => {
                 resolve()
-                delete this.config.iFrameWindow[this.config.callback]
+                delete getWindow()[this.config.callback]
             }
         })
-        this.config.iFrameWindow.document.body.appendChild(script)
+        getWindow().document.body.appendChild(script)
         return p
     }
 
     load() {
-        if (typeof window === 'undefined') {
+        if (typeof getWindow() === 'undefined') {
             return null
         }
         const { useAMapUI } = this.config
@@ -88,8 +85,8 @@ export default class APILoader {
             mainPromise.then(() => {
                 if (useAMapUI && amapuiPromise) {
                     amapuiPromise.then(() => {
-                        if (this.config.iFrameWindow.initAMapUI && !amapuiInited) {
-                            this.config.iFrameWindow.initAMapUI()
+                        if (getWindow().initAMapUI && !amapuiInited) {
+                            getWindow().initAMapUI()
                             if (typeof useAMapUI === 'function') {
                                 useAMapUI()
                             }

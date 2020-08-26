@@ -9,7 +9,8 @@ import {
 } from '../utils/markerUtils'
 import {
   toLnglat,
-  toPixel
+  toPixel,
+  getWindow
 } from '../utils/common'
 
 class Marker extends React.Component<MarkerProps, {}> {
@@ -23,7 +24,7 @@ class Marker extends React.Component<MarkerProps, {}> {
 
   constructor(props: MarkerProps) {
     super(props)
-    if (typeof window !== 'undefined') {
+    if (typeof getWindow() !== 'undefined') {
       if (!props.__map__) {
         log.warning('MAP_INSTANCE_REQUIRED')
       } else {
@@ -69,7 +70,7 @@ class Marker extends React.Component<MarkerProps, {}> {
 
   createMarker(props: MarkerProps) {
     const options = this.buildCreateOptions(props)
-    this.marker = new window.AMap.Marker(options)
+    this.marker = new (getWindow().AMap.Marker)(options)
 
     this.marker.render = (function(marker) {
       return function(component) {

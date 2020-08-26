@@ -2,6 +2,7 @@
 import React from 'react'
 import withPropsReactive from '../utils/withPropsReactive'
 import log from '../utils/log'
+import { getWindow } from '../utils/common'
 
 type EditorProps = {
   __map__: Object,
@@ -22,7 +23,7 @@ class PolyEditor extends React.Component<EditorProps, {}> {
 
   constructor(props: EditorProps) {
     super(props)
-    if (typeof window !== 'undefined') {
+    if (typeof getWindow() !== 'undefined') {
       if (!(props.__map__ && props.__poly__)) {
         log.warning('MAP_INSTANCE_REQUIRED')
       } else {
@@ -78,7 +79,7 @@ class PolyEditor extends React.Component<EditorProps, {}> {
     }
     return new Promise((resolve) => {
       this.map.plugin(['AMap.PolyEditor'], () => {
-        this.polyEditor = new window.AMap.PolyEditor(
+        this.polyEditor = new (getWindow().AMap.PolyEditor)(
           this.map, this.poly
         )
         resolve(this.polyEditor)

@@ -3,7 +3,7 @@ import React from 'react'
 import APILoader from '../utils/APILoader'
 import isFun from '../utils/isFun'
 import log from '../utils/log'
-import {toLnglat} from '../utils/common'
+import {toLnglat, getWindow} from '../utils/common'
 import withPropsReactive from '../utils/withPropsReactive'
 
 const Component = React.Component
@@ -127,15 +127,13 @@ class BaseMap extends Component<MapProps, { mapLoaded: boolean }> {
                 return `amap://styles/${styleStr}`
             }
         }
-        if (typeof this.props.iFrameWindow !== 'undefined') {
+        if (typeof getWindow() !== 'undefined') {
             this.pluginMap = {}
             new APILoader({
                 key: props.amapkey,
                 useAMapUI: props.useAMapUI,
                 version: props.version,
-                protocol: props.protocol,
-                iFrameDom: props.iFrameDom,
-                iFrameWindow: props.iFrameWindow,
+                protocol: props.protocol
             }).load().then(() => {
                 this.createInstance()
                 if (!this.state.mapLoaded) {
@@ -178,9 +176,8 @@ class BaseMap extends Component<MapProps, { mapLoaded: boolean }> {
 
     createInstance() {
         if (!this.map) {
-            const iFrameWindow = this.props.iFrameWindow
             const options = this.buildCreateOptions()
-            this.map = new iFrameWindow.AMap.Map(this.mapWrapper, options)
+            this.map = new (getWindow().AMap.Map)(this.mapWrapper, options)
             // install map plugins
             this.setPlugins(this.props)
             this.props.onInstanceCreated && this.props.onInstanceCreated()
@@ -308,7 +305,7 @@ class BaseMap extends Component<MapProps, { mapLoaded: boolean }> {
             const {onCreated, ...restOpts} = opts
             const initOpts = {...defaultOpts[name], ...restOpts}
             this.map.plugin([`AMap.${name}`], () => {
-                this.pluginMap[name] = new this.props.iFrameWindow.AMap[name](initOpts)
+                this.pluginMap[name] = new (getWindow().AMap)[name](initOpts)
                 this.map.addControl(this.pluginMap[name])
                 if (isFun(onCreated)) {
                     onCreated(this.pluginMap[name])
@@ -324,7 +321,7 @@ class BaseMap extends Component<MapProps, { mapLoaded: boolean }> {
             const {onCreated, ...restOpts} = opts
             const initOpts = {...defaultOpts.ControlBar, ...restOpts}
             this.map.plugin(['AMap.ControlBar'], () => {
-                this.pluginMap.ControlBar = new this.props.iFrameWindow.AMap.ControlBar(initOpts)
+                this.pluginMap.ControlBar = new (getWindow().AMap.ControlBar)(initOpts)
                 this.map.addControl(this.pluginMap.ControlBar)
                 if (isFun(onCreated)) {
                     onCreated(this.pluginMap.ControlBar)

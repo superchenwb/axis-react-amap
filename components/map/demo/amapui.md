@@ -22,7 +22,7 @@ class UIMarker extends React.Component {
   }
 
   loadUI() {
-    window.AMapUI.loadUI(['overlay/SimpleMarker'], (SimpleMarker) => {
+    getWindow().AMapUI.loadUI(['overlay/SimpleMarker'], (SimpleMarker) => {
       this.initPage(SimpleMarker);
     })
   }

@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import withPropsReactive from '../utils/withPropsReactive'
 import log from '../utils/log'
 import PolyEditor from '../polyeditor'
-import { toLnglat } from '../utils/common'
+import { toLnglat, getWindow } from '../utils/common'
 /*
  * props
  * {
@@ -52,7 +52,7 @@ class Polygon extends Component<PolyProps, {loaded: boolean}> {
 
   constructor(props: PolyProps) {
     super(props)
-    if (typeof window !== 'undefined') {
+    if (typeof getWindow() !== 'undefined') {
       if (!props.__map__) {
         log.warning('MAP_INSTANCE_REQUIRED')
       } else {
@@ -93,7 +93,7 @@ class Polygon extends Component<PolyProps, {loaded: boolean}> {
   initMapPolygon(props: PolyProps) {
     const options = this.buildCreateOptions(props)
     options.map = this.map
-    this.polygon = new window.AMap.Polygon(options)
+    this.polygon = new (getWindow().AMap.Polygon)(options)
     this.setState({
       loaded: true
     })

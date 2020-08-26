@@ -1,6 +1,6 @@
 {
   "name": "axis-react-amap",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "AMap Component Based On React",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
